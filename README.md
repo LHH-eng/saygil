@@ -11,6 +11,12 @@
 
 ---
 
+## 시연 영상 (43초)
+
+[![세이길 시연 영상](docs/demo-thumbnail.png)](docs/saygil-demo.mp4)
+
+이미지를 누르면 영상 페이지로 이동해 바로 재생할 수 있어요: [docs/saygil-demo.mp4](docs/saygil-demo.mp4)
+
 ## 왜 만들었나
 
 | 지금의 안내 | 세이길 |
