@@ -69,10 +69,12 @@ export const SCHOOL = zoneAt('Z2', '○○초 사거리', ROUTE_PTS[3], Accident
   chip: '어린이',
   briefTitle: '○○초 사거리 · 어린이 보행 사고',
   briefLine: () => '등교 시간에 지나가요 · 우회전 중 사고가 많았어요',
+  bannerTitle: '어린이 횡단보도 사고가 많았던 곳이에요',
+  bannerBody: '등교 시간에 지나가요.',
   splitTitle: '어린이 횡단보도\n사고가 많았어요',
-  splitDo: null, // 엔진의 행동 문구를 그대로 사용
   splitFacts: ['최근 3년 사고 대부분이 우회전 중 발생', '하교 시간(오후 3~5시)에 집중'],
-  familiar: true, // 매일 지나는 출근길 초등학교
+  // 시연 영상(최신 기획)처럼 300m 전에 [장소]+[사고 이유]+[행동]을 모두 말하도록
+  familiar: false,
 });
 export const MARKET = zoneAt('Z3', '○○시장 앞', [2200, 3800], AccidentType.ELDERLY_PEDESTRIAN, RoadShape.STRAIGHT, 7, null, {
   s: CORNER_S[4] + 1300,
@@ -96,7 +98,8 @@ export const TANK_LITERS = 66;
 export const GAS_S = CORNER_S[3] + 500;
 
 // 나만의 위험 지점: 내 주행 기록에서 급정거가 반복된 곳
-export const MY_SPOT = { name: '○○삼거리', s: CORNER_S[2], world: { x: ROUTE_PTS[2][0], y: ROUTE_PTS[2][1] }, triggerM: 300, times: 2 };
+// (다리와 학교 사이, 학교 1km 전 배너와 겹치지 않는 곳)
+export const MY_SPOT = { name: '○○삼거리', s: CORNER_S[1] + 600, world: { x: 600, y: 1500 }, triggerM: 300, times: 2 };
 // 가상 차량 내비 음성 (세이길은 이 음성이 끝날 때까지 기다렸다가 말함)
 export const NAV_CALL = { s: CORNER_S[3] - 330, text: '300m 앞 우회전입니다.' };
 // 실시간 위험 감지: 앞쪽 차들이 갑자기 멈추는 곳 (주유 후 출발 직후)

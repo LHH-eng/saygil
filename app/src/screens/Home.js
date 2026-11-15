@@ -24,7 +24,7 @@ export default function Home({ onStart, onPick }) {
         Safe하게, Say해주는 길
       </T>
       <T style={abs(80, 300, 780, 170, { fontSize: 26, color: C.sub, lineHeight: 40 })}>
-        {'위험한 곳에 들어가기 전에\n어떤 사고가 많았던 곳인지, 지금 무엇을 해야 하는지\n음성으로 알려드려요.\n오른쪽 장면을 누르면 그 장면부터 볼 수 있어요.'}
+        {'내비는 그대로, 세이길은 필요한 순간에만.\n위험한 곳에 들어가기 전에 어떤 사고가 많았던 곳인지,\n지금 무엇을 해야 하는지 음성으로 알려드려요.\n오른쪽 장면을 누르면 그 장면부터 볼 수 있어요.'}
       </T>
       <Btn x={80} y={500} w={520} h={110} primary label="시뮬레이션 시작" size={38} onPress={onStart} />
       <T style={abs(80, 640, 780, 60, { fontSize: 20, color: C.dim, lineHeight: 30 })}>

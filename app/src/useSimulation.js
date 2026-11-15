@@ -39,7 +39,7 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 export function targetSpeed(s, r) {
   let t = s < 500 ? 70 : s < BRIDGE.s ? 40 : 50;               // 다리 배너 뒤 감속
   if (s > MY_SPOT.s - 300 && s < MY_SPOT.s) t = Math.min(t, 35); // 나만의 위험 지점
-  if (s > SCHOOL.s - 500 && s < SCHOOL.s + 20) {                 // 어린이 구간
+  if (s > SCHOOL.s - 800 && s < SCHOOL.s + 20) {                 // 어린이 구간
     t = Math.min(t, 30);
     if (!r.stopDone && s > SCHOOL.s - 300) t = clamp((SCHOOL_STOP_S - s) * 0.25, 6, 30);
   }
@@ -68,8 +68,8 @@ const initial = () => ({
 const PRESETS = {
   temp: { s: 120, v: 60 },
   banner: { s: 380, v: 70, done: ['tempDone'] },
-  myspot: { s: 2080, v: 45, pass: [BRIDGE], done: ['tempDone'] },
-  split: { s: NAV_CALL.s - 150, v: 30, pass: [BRIDGE], done: ['tempDone', 'spotDone'] },
+  myspot: { s: MY_SPOT.s - 420, v: 45, pass: [BRIDGE], done: ['tempDone'] },
+  split: { s: NAV_CALL.s - 150, v: 30, pass: [BRIDGE], done: ['tempDone', 'spotDone'], spoken: ['Z2:BANNER'] },
   fuel: { s: GAS_S - 40, v: 20, pass: [BRIDGE, SCHOOL], done: ['tempDone', 'spotDone', 'navDone', 'stopDone'] },
   hazard: { s: GAS_S + 5, v: 10, pass: [BRIDGE, SCHOOL], done: ['tempDone', 'spotDone', 'navDone', 'stopDone', 'fueled'] },
   newarea: { s: NEW_AREA.s - 120, v: 30, pass: [BRIDGE, SCHOOL], done: ['tempDone', 'spotDone', 'navDone', 'stopDone', 'fueled', 'hazardDone'] },
@@ -155,6 +155,7 @@ export function useSimulation() {
     const p = PRESETS[key];
     (p.pass || []).forEach(pass);
     (p.done || []).forEach((f) => { r[f] = true; });
+    (p.spoken || []).forEach((k) => { r.spoken[k] = true; });
     Object.assign(r, { s: p.s, v: p.v, heading: positionAt(p.s).heading });
     R.current = r;
     setView(snap(r));
@@ -214,14 +215,14 @@ export function useSimulation() {
       // ② 주행 중 기온이 영하로 바뀌면 결빙 구간 다시 알림
       if (!r.tempDone && r.s >= TEMP_DROP_S) {
         r.tempDone = true;
-        notice({ tone: 'blue', icon: 'snow', title: `바깥 기온이 영하로 내려갔어요 (${TEMP_START}°C → ${TEMP_COLD}°C)`, body: '앞쪽 ○○교 결빙 안내를 다시 켤게요.' });
-        say(`바깥 기온이 영하 ${Math.abs(TEMP_COLD)}도로 내려갔어요. 앞쪽 ○○교 결빙 안내를 다시 켤게요.`);
+        notice({ tone: 'blue', icon: 'snow', title: `기온이 영하로 떨어졌어요 (${TEMP_START}°C → ${TEMP_COLD}°C)`, body: '앞 ○○교는 결빙 사고가 잦은 곳이에요. 결빙 안내를 다시 켤게요.' });
+        say('기온이 영하로 떨어졌어요. 앞 ○○교는 결빙 사고가 잦은 곳이에요.');
       }
       // ③ 나만의 위험 지점: 내 주행 기록에서 급정거가 반복된 곳
       if (!r.spotDone && r.s >= MY_SPOT.s - MY_SPOT.triggerM && r.s < MY_SPOT.s) {
         r.spotDone = true;
-        notice({ tone: 'purple', icon: 'pin', title: `나만의 위험 지점 · ${MY_SPOT.name}`, body: `여기서 지난주에 ${MY_SPOT.times === 2 ? '두' : MY_SPOT.times} 번 급정거하셨어요. 미리 속도를 줄여주세요.` });
-        say(`곧 ${MY_SPOT.name}예요. 여기서 지난주에 두 번 급정거하셨어요. 미리 속도를 줄여주세요.`);
+        notice({ tone: 'purple', icon: 'pin', title: `나만의 위험 지점 · ${MY_SPOT.name}`, body: `여기서 지난주에 ${MY_SPOT.times === 2 ? '두' : MY_SPOT.times} 번 급정거하셨어요. 미리 속도를 줄여보세요.` });
+        say(`곧 ${MY_SPOT.name}예요. 여기서 지난주에 두 번 급정거하셨어요. 미리 속도를 줄여보세요.`);
       }
       // ① 가상 차량 내비 음성: 세이길은 이 음성이 끝날 때까지 기다렸다가 말함
       if (!r.navDone && r.s >= NAV_CALL.s) {
@@ -257,7 +258,7 @@ export function useSimulation() {
         const key = `${a.zone.id}:${g.stage}`;
         if (!r.spoken[key]) {
           r.spoken[key] = true;
-          say(g.message);
+          say(g.message, { tag: a.zone.id });
           r.guide = { zone: a.zone, ...g, bannerDist: a.distanceM, key };
         }
         break;
@@ -282,12 +283,14 @@ export function useSimulation() {
         r.refuel = detect(snapshot(18, ODOMETER, null, true), snapshot(76, ODOMETER, true, true), TANK_LITERS);
         r.guide = null;
         setView(snap(r, { guide: null, toast: null, notice: null }));
+        clearInterval(id);
         setPhase('fuel');
         say(`주유하셨네요. ${r.refuel.liters}L로 추정했어요. 금액만 말씀해 주세요.`);
         return;
       }
       if (r.s >= ROUTE_LEN - 2) {
         r.s = ROUTE_LEN; r.v = 0;
+        clearInterval(id);
         arrive(r);
         return;
       }

@@ -70,18 +70,25 @@ function pump() {
   }
 }
 
-/** 세이길 안내. 앞 안내가 끝나면 이어서 말함 */
-export function say(text, { onDone } = {}) {
+/** 세이길 안내. 앞 안내가 끝나면 이어서 말함. tag가 같은 대기 안내는 새 것으로 바꿈 (같은 장소의 1km 안내 → 300m 안내) */
+export function say(text, { onDone, tag } = {}) {
+  if (tag) queue = queue.filter((q) => q.tag !== tag);
   const pending = queue.filter((q) => q.kind === 'saygil');
   if (pending.length >= MAX_PENDING) queue.splice(queue.indexOf(pending[0]), 1);
-  queue.push({ kind: 'saygil', text, onDone });
+  queue.push({ kind: 'saygil', text, onDone, tag });
   emit();
   pump();
 }
 
-/** 차량 내비 음성 (가상). 세이길보다 먼저 말하고, 세이길은 그동안 대기 */
+/** 차량 내비 음성 (가상). 내비가 우선: 세이길이 말하던 안내는 끊고, 내비가 끝날 때까지 대기 */
 export function navSay(text) {
   queue.unshift({ kind: 'nav', text });
+  if (current && current.kind === 'saygil') {
+    seq++;
+    clearTimeout(watchdog);
+    current = null;
+    try { Speech.stop(); } catch (e) { /* ignore */ }
+  }
   emit();
   pump();
 }
