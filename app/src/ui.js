@@ -69,6 +69,18 @@ export const ICONS = {
       <Path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4zM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
     </G>
   ),
+  pin: (c) => (
+    <G stroke={c} {...sw}>
+      <Path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" />
+      <Circle cx="12" cy="10" r="2.3" />
+    </G>
+  ),
+  alert: (c) => (
+    <G stroke={c} {...sw}>
+      <Path d="M12 3.5L2.8 19.5h18.4L12 3.5zM12 10v4.5" />
+      <Circle cx="12" cy="17" r="0.6" fill={c} />
+    </G>
+  ),
   check: (c) => (
     <G stroke={c} {...sw}>
       <Path d="M5 12.5l4.5 4.5L19 7.5" />

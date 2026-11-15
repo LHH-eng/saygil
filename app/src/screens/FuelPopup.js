@@ -24,7 +24,7 @@ const inputBase = (x, w, border) =>
     paddingVertical: 0,
   });
 
-export default function FuelPopup({ refuel, clock, onSave, onLater }) {
+export default function FuelPopup({ refuel, clock, speed = 1, onSave, onLater }) {
   const [liters, setLiters] = useState(String(refuel.liters));
   const [amount, setAmount] = useState('');
   const touched = useRef(false);
@@ -40,10 +40,10 @@ export default function FuelPopup({ refuel, clock, onSave, onLater }) {
       if (touched.current) return;
       setAmount(String(DEMO_AMOUNT));
       say('삼십팔 리터, 6만 2천 원.');
-    }, 4500);
+    }, 3000 / speed);
     const t2 = setTimeout(() => {
       if (!touched.current) onSave();
-    }, 8500);
+    }, 5000 / speed);
     timers.current = [t1, t2];
     return () => timers.current.forEach(clearTimeout);
   }, []);

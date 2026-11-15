@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Pressable, useWindowDimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { C, STAGE_W, STAGE_H } from './src/theme.js';
 import { useSimulation } from './src/useSimulation.js';
-import { T, abs, BleedCtx } from './src/ui.js';
+import { abs, BleedCtx } from './src/ui.js';
 import { ZONES } from './src/scenario.js';
 import Home from './src/screens/Home.js';
 import Briefing from './src/screens/Briefing.js';
 import Drive from './src/screens/Drive.js';
 import FuelPopup from './src/screens/FuelPopup.js';
 import Arrival from './src/screens/Arrival.js';
+import Menu from './src/screens/Menu.js';
 
 export default function App() {
   const { width, height } = useWindowDimensions();
@@ -18,29 +19,30 @@ export default function App() {
   const bleed = { bx: Math.ceil(Math.max(0, (width / scale - STAGE_W) / 2)) + 2, by: Math.ceil(Math.max(0, (height / scale - STAGE_H) / 2)) + 2 };
   const sim = useSimulation();
   const [note, setNote] = useState(null);
-  const { phase, view, speaking } = sim;
+  const { phase, view, voice } = sim;
 
   let screen = null;
   if (phase === 'home') {
-    screen = <Home onStart={() => { setNote(null); sim.start(); }} />;
+    screen = <Home onStart={() => { setNote(null); sim.start(); }} onPick={(stage) => { setNote(null); sim.jump(stage); }} />;
   } else if (phase === 'briefing') {
     screen = (
       <Briefing
-        speaking={speaking}
+        voice={voice}
         note={note}
         onStart={sim.startDrive}
         onAlt={() => setNote('데모에서는 기본 경로로 안내해요')}
       />
     );
   } else if (phase === 'drive') {
-    screen = <Drive view={view} speaking={speaking} />;
+    screen = <Drive view={view} voice={voice} />;
   } else if (phase === 'fuel') {
     screen = (
       <>
-        <Drive view={view} speaking={speaking} mode="fuel" />
+        <Drive view={view} voice={voice} mode="fuel" />
         <FuelPopup
           refuel={view.refuel}
           clock={view.clock}
+          speed={sim.mul}
           onSave={() => sim.finishFuel(true)}
           onLater={() => sim.finishFuel(false)}
         />
@@ -63,14 +65,7 @@ export default function App() {
           })}
         >
           {screen}
-          {(phase === 'briefing' || phase === 'drive' || phase === 'fuel') && (
-            <Pressable
-              onPress={sim.stop}
-              style={abs(1830, 8, 150, 40, { borderRadius: 20, backgroundColor: 'rgba(11,14,19,0.6)', alignItems: 'center', justifyContent: 'center' })}
-            >
-              <T style={{ fontSize: 19, color: C.sub }}>■ 시뮬레이션 종료</T>
-            </Pressable>
-          )}
+          {phase !== 'home' && <Menu mul={sim.mul} onSpeed={sim.setSpeed} onJump={sim.jump} onStop={sim.stop} />}
         </View>
       </View>
       </BleedCtx.Provider>
