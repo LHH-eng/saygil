@@ -3,3 +3,12 @@ build/
 *.class
 .idea/
 local.properties
+
+# app/ (React Native)
+app/node_modules/
+app/.expo/
+app/build.log
+app/android/build/
+app/android/app/build/
+app/android/app/.cxx/
+app/android/.gradle/

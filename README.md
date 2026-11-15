@@ -89,6 +89,15 @@ gradle test   # 단위 테스트 12개
 gradle run    # 시나리오 데모
 ```
 
+## 앱 (`app/`)
+
+React Native(Expo) 가로 화면 앱입니다. `engine/`의 Kotlin 로직(GuidanceEngine, ZoneFinder, FuelDetector)을 JS로 옮겨 `app/src/engine/`에서 그대로 사용합니다. 첫 화면의 **시뮬레이션 시작**을 누르면 겨울 출근길(출발 브리핑, 1km 배너, 300m 화면 분할, 주유 팝업, 도착 리포트)이 재생되고, 안내는 한국어 TTS로 나옵니다.
+
+- 설치용 APK: [`apk/SayGil_세이길_release.apk`](apk/SayGil_세이길_release.apk)
+- 엔진 테스트: `cd app && npm test` (Kotlin 테스트 12개를 JS로 포팅)
+- 로컬 빌드: `cd app && npm install`, 그다음 `cd android && ./gradlew assembleRelease`
+  - Windows에서 경로가 길면 CMake(ninja)가 실패하므로 `C:\sg` 같은 짧은 경로에서 빌드하세요.
+
 ## Pleos Connect SDK, API 사용 계획
 
 | SDK / 데이터 | 쓰는 정보 | 쓰이는 기능 |
