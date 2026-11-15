@@ -11,13 +11,11 @@
 
 ---
 
-## 시연 영상 (43초)
+## 시연 영상 (52초)
 
-<img width="960" height="540" alt="demo" src="https://github.com/user-attachments/assets/3ec99256-076b-4db0-b8c6-ebf3b90bd902" />
+![세이길 시연 영상](docs/saygil-demo.gif)
 
-이미지를 누르면 영상 페이지로 이동해 바로 재생할 수 있어요: https://github.com/user-attachments/assets/88eb999b-de84-48d9-9e48-d5e4fe922a0c
-
-
+고화질 영상: [docs/saygil-demo.mp4](docs/saygil-demo.mp4)
 
 ## 왜 만들었나
 
