@@ -6,7 +6,7 @@ import { abs, T, Btn, Logo, Icon } from '../ui.js';
 import MapView from '../MapView.js';
 import { ZONES, BRIDGE, SCHOOL, TEMP_C, TOTAL_KM } from '../scenario.js';
 
-const CAM = { vx: 500, vy: 1250, heading: 0, k: 0.26, ax: 1375, ay: 390 };
+const CAM = { vx: 500, vy: 1250, heading: 0, k: 0.26, ax: 1375, ay: 425 };
 
 export default function Briefing({ speaking, note, onStart, onAlt }) {
   const chips = [
@@ -17,7 +17,7 @@ export default function Briefing({ speaking, note, onStart, onAlt }) {
   return (
     <View style={abs(0, 0, 2000, 750)}>
       <MapView width={2000} height={750} cam={CAM} zones={ZONES} chips={chips} showVehicle={false} />
-      <View style={abs(0, 0, 750, 750, { backgroundColor: C.bg })} />
+      <View style={abs(-400, -400, 1150, 1550, { backgroundColor: C.bg })} />
       <Logo x={55} y={50} />
       <T style={abs(120, 58, 300, 40, { fontSize: 34, fontWeight: '800' })}>세이길</T>
       <T style={abs(445, 66, 250, 30, { fontSize: 22, color: C.sub, textAlign: 'right' })}>출발 전 · P단</T>

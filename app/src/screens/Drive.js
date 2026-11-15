@@ -126,7 +126,8 @@ function SplitPanel({ g, speed }) {
     ? (speed > ICING_SAFE_SPEED ? `${ICING_SAFE_SPEED}km로 속도를 줄이세요` : '급제동은 피하세요')
     : z.type.action;
   return (
-    <View style={abs(1330, 0, 670, 750, { backgroundColor: C.amberPanel, borderLeftWidth: 4, borderLeftColor: C.amber })}>
+    <View style={abs(1330, -400, 1070, 1550, { backgroundColor: C.amberPanel, borderLeftWidth: 4, borderLeftColor: C.amber })}>
+      <View style={abs(0, 400, 670, 750)}>
       <Logo x={39} y={38} size={36} radius={9} />
       <T style={abs(90, 46, 500, 28, { fontSize: 21, color: C.sub })}>세이길 · 300m 앞</T>
       <IconBox x={39} y={100} size={80} name={icing ? 'snow' : 'walker'} bg={C.amber} color="#1A1305" radius={18} pad={0.22} />
@@ -142,6 +143,7 @@ function SplitPanel({ g, speed }) {
         <T key={i} style={abs(39, 392 + i * 40, 590, 32, { fontSize: 22, color: C.sub })}>{`· ${f}`}</T>
       ))}
       <T style={abs(39, 682, 600, 28, { fontSize: 20, color: C.dim })}>통과하면 자동으로 닫히고 내비가 전체 화면으로 돌아와요</T>
+      </View>
     </View>
   );
 }

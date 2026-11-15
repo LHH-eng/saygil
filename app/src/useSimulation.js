@@ -85,8 +85,11 @@ export function useSimulation() {
   useEffect(() => {
     if (phase !== 'drive') return undefined;
     const r = R.current;
-    const dt = TICK_MS / 1000;
+    let last = Date.now();
     const id = setInterval(() => {
+      const now = Date.now();
+      const dt = Math.min(0.25, (now - last) / 1000); // 실제 경과 시간 기준 (프레임이 느려도 속도 일정)
+      last = now;
       // 속도
       const tgt = targetSpeed(r.s, r.fueled);
       const rate = (tgt > r.v ? 10 : 18) * dt;
@@ -111,8 +114,6 @@ export function useSimulation() {
           r.spoken[key] = true;
           say(g.message);
           r.guide = { zone: a.zone, ...g, bannerDist: a.distanceM, key };
-        } else if (r.guide && r.guide.zone === a.zone && r.guide.stage === g.stage) {
-          r.guide = { ...r.guide, strong: g.strong };
         }
         break;
       }

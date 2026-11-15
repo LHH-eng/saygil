@@ -23,8 +23,8 @@ export default function Home({ onStart }) {
         zones={ZONES}
         showVehicle={false}
       />
-      <View style={abs(0, 0, 2000, 750, { backgroundColor: 'rgba(17,21,29,0.82)' })} />
-      <View style={abs(0, 0, 900, 750, { backgroundColor: C.bg })} />
+      <View style={abs(-400, -400, 2800, 1550, { backgroundColor: 'rgba(17,21,29,0.82)' })} />
+      <View style={abs(-400, -400, 1300, 1550, { backgroundColor: C.bg })} />
       <Logo x={80} y={90} size={84} radius={20} />
       <T style={abs(190, 98, 500, 70, { fontSize: 58, fontWeight: '900' })}>세이길</T>
       <T style={abs(80, 220, 760, 70, { fontSize: 44, fontWeight: '800', lineHeight: 60 })}>

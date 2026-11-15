@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { C, STAGE_W, STAGE_H } from './src/theme.js';
 import { useSimulation } from './src/useSimulation.js';
-import { T, abs } from './src/ui.js';
+import { T, abs, BleedCtx } from './src/ui.js';
 import { ZONES } from './src/scenario.js';
 import Home from './src/screens/Home.js';
 import Briefing from './src/screens/Briefing.js';
@@ -15,6 +15,7 @@ import Arrival from './src/screens/Arrival.js';
 export default function App() {
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / STAGE_W, height / STAGE_H);
+  const bleed = { bx: Math.ceil(Math.max(0, (width / scale - STAGE_W) / 2)) + 2, by: Math.ceil(Math.max(0, (height / scale - STAGE_H) / 2)) + 2 };
   const sim = useSimulation();
   const [note, setNote] = useState(null);
   const { phase, view, speaking } = sim;
@@ -51,13 +52,13 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
+      <BleedCtx.Provider value={bleed}>
       <View style={{ flex: 1, backgroundColor: C.bg }}>
         <StatusBar hidden />
         {/* 시안(2000x750) 그대로 그린 뒤 화면 크기에 맞춰 축소/확대 */}
         <View
           style={abs((width - STAGE_W) / 2, (height - STAGE_H) / 2, STAGE_W, STAGE_H, {
             transform: [{ scale }],
-            overflow: 'hidden',
             backgroundColor: C.bg,
           })}
         >
@@ -72,6 +73,7 @@ export default function App() {
           )}
         </View>
       </View>
+      </BleedCtx.Provider>
     </SafeAreaProvider>
   );
 }

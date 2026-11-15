@@ -59,7 +59,8 @@ export default function FuelPopup({ refuel, clock, onSave, onLater }) {
   ];
 
   return (
-    <View style={abs(0, 0, 2000, 750, { backgroundColor: 'rgba(11,14,19,0.72)' })}>
+    <View style={abs(0, 0, 2000, 750)}>
+      <View style={abs(-400, -400, 2800, 1550, { backgroundColor: 'rgba(11,14,19,0.72)' })} />
       <View style={abs(463, 107, 1074, 536, { backgroundColor: '#1F2631', borderRadius: 34 })}>
         <IconBox x={40} y={33} size={54} name="fuel" bg="#1B2E4D" color={C.blue} radius={12} pad={0.2} />
         <T style={abs(110, 36, 700, 50, { fontSize: 36, fontWeight: '900' })}>주유하셨네요! 기록해 둘까요?</T>

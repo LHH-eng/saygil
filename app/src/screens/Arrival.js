@@ -1,7 +1,7 @@
 // ⑤ 도착, 주차: 안전 통과 결과와 영토
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import Svg, { Polygon, Path, Polyline, Rect, Text as SText, Ellipse } from 'react-native-svg';
+import Svg, { G, Polygon, Path, Polyline, Rect, Text as SText, Ellipse } from 'react-native-svg';
 import { C } from '../theme.js';
 import { abs, T, Btn, Logo } from '../ui.js';
 import { fmtClock, ROUTE_LEN, clockAt } from '../scenario.js';
@@ -43,11 +43,14 @@ export default function Arrival({ safeCount, total, onRestart }) {
 
   return (
     <View style={abs(0, 0, 2000, 750, { backgroundColor: C.bg })}>
-      <Svg width={1250} height={750} style={{ position: 'absolute', left: 0, top: 0 }}>
-        <Rect x={0} y={0} width={1250} height={750} fill={C.map} />
+      <View style={abs(-400, -400, 1650, 1550, { backgroundColor: C.map })} />
+      <View style={abs(1250, -400, 1150, 1550, { backgroundColor: '#151A22' })} />
+      <Svg width={1250} height={1150} style={{ position: 'absolute', left: 0, top: -200 }}>
+        <G transform="translate(0,200)">
+        <Rect x={0} y={-200} width={1250} height={1150} fill={C.map} />
         <Path d="M0 565 C 300 545, 700 575, 1250 545" stroke="#1E2A3E" strokeWidth={30} fill="none" />
-        <Path d="M0 200 L1250 170 M0 380 L1250 375 M0 650 L1250 630 M200 0 L260 750 M620 0 L600 750 M1080 0 L1070 750" stroke={C.road} strokeWidth={5} fill="none" />
-        <Path d="M160 0 C 380 260, 560 380, 820 750 M1000 0 C 900 300, 700 420, 480 750" stroke={C.road} strokeWidth={4} fill="none" />
+        <Path d="M0 200 L1250 170 M0 380 L1250 375 M0 650 L1250 630 M0 920 L1250 905 M0 -90 L1250 -110 M193 -200 L268 950 M622 -200 L598 950 M1082 -200 L1068 950" stroke={C.road} strokeWidth={5} fill="none" />
+        <Path d="M60 -200 C 380 260, 560 380, 880 950 M1060 -200 C 900 300, 700 420, 400 950" stroke={C.road} strokeWidth={4} fill="none" />
         <Ellipse cx={600} cy={380} rx={565} ry={300} stroke="#434C5B" strokeWidth={2} strokeDasharray="10,8" fill="none" />
         {HEX.map(([kind, color, pts, outline], i) => (
           <Polygon
@@ -59,12 +62,13 @@ export default function Arrival({ safeCount, total, onRestart }) {
             strokeWidth={outline ? 4 : 0}
           />
         ))}
-        <Polyline points="598,750 596,520 590,440 660,340 740,270 872,150" fill="none" stroke="rgba(255,255,255,0.88)" strokeWidth={4} strokeDasharray="10,9" />
+        <Polyline points="598,950 596,520 590,440 660,340 740,270 872,150" fill="none" stroke="rgba(255,255,255,0.88)" strokeWidth={4} strokeDasharray="10,9" />
         <SText x={190} y={124} fill="#7C8694" fontSize={21}>○○동</SText>
         <SText x={1000} y={248} fill="#7C8694" fontSize={21}>○○동</SText>
         <SText x={200} y={586} fill="#7C8694" fontSize={21}>○○천</SText>
         <SText x={900} y={599} fill="#7C8694" fontSize={21}>○○IC</SText>
         <SText x={588} y={362} fill="#FFFFFF" fontSize={26} fontWeight="bold">○○구</SText>
+        </G>
       </Svg>
 
       {/* 전체 / 내 영토 전환 */}

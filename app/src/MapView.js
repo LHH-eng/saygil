@@ -1,8 +1,9 @@
 // 차량 내비 지도(시안의 어두운 도로 지도). 진행 방향이 위쪽(heading-up)이고 차량은 anchor에 고정.
-import React from 'react';
+import React, { useContext } from 'react';
 import Svg, { Line, Polyline, Circle, Rect, Polygon, G, Text as SText } from 'react-native-svg';
 import { C } from './theme.js';
 import { ROUTE_PTS } from './scenario.js';
+import { BleedCtx } from './ui.js';
 
 export function makeProjector({ vx, vy, heading, k, ax, ay }) {
   const h = (heading * Math.PI) / 180;
@@ -21,21 +22,23 @@ const GRID = 300;
  * chips: [{ world:{x,y}, text, dx, dy }] 구간 이름표(출발 전 브리핑)
  */
 export default function MapView({ width, height, cam, zones = [], chips = [], showVehicle = true, extra }) {
+  const { bx, by } = useContext(BleedCtx);
   const P = makeProjector(cam);
   const { k } = cam;
   const lines = [];
-  for (let g = -1500; g <= 3900; g += GRID) {
-    const a = P(g, -2000), b = P(g, 5200);
+  for (let g = -3000; g <= 6600; g += GRID) {
+    const a = P(g, -4000), b = P(g, 8000);
     lines.push(<Line key={`v${g}`} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={C.road} strokeWidth={Math.max(6, 62 * k)} />);
-    const c = P(-2000, g), d = P(4800, g);
+    const c = P(-4000, g), d = P(8000, g);
     lines.push(<Line key={`h${g}`} x1={c[0]} y1={c[1]} x2={d[0]} y2={d[1]} stroke={C.road} strokeWidth={Math.max(6, 62 * k)} />);
   }
   const routePts = ROUTE_PTS.map(([x, y]) => P(x, y).join(',')).join(' ');
   const r = Math.max(30, 150 * k);
 
   return (
-    <Svg width={width} height={height} style={{ position: 'absolute', left: 0, top: 0 }}>
-      <Rect x={0} y={0} width={width} height={height} fill={C.map} />
+    <Svg width={width + 2 * bx} height={height + 2 * by} style={{ position: 'absolute', left: -bx, top: -by }}>
+      <G transform={`translate(${bx},${by})`}>
+      <Rect x={-bx} y={-by} width={width + 2 * bx} height={height + 2 * by} fill={C.map} />
       {lines}
       <Polyline points={routePts} fill="none" stroke={C.route} strokeWidth={Math.max(8, 40 * k)} strokeLinejoin="round" strokeLinecap="round" />
       {zones.map((z) => {
@@ -70,6 +73,7 @@ export default function MapView({ width, height, cam, zones = [], chips = [], sh
           transform={`rotate(0 ${cam.ax} ${cam.ay})`}
         />
       )}
+      </G>
     </Svg>
   );
 }

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { Text, View, Pressable } from 'react-native';
 import Svg, { Path, Circle, Rect, G } from 'react-native-svg';
 import { C } from './theme.js';
+
+/** 화면 비율이 시안보다 길쭉할 때 남는 여백(시안 좌표). 지도가 이만큼만 더 그린다 */
+export const BleedCtx = createContext({ bx: 0, by: 0 });
 
 /** 시안(2000x750) 좌표 그대로 배치하기 위한 절대 위치 스타일 */
 export const abs = (x, y, w, h, extra) => ({ position: 'absolute', left: x, top: y, width: w, height: h, ...extra });
