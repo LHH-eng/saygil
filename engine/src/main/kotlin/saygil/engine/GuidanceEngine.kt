@@ -45,11 +45,15 @@ object GuidanceEngine {
         else -> ctx.speedKmh > 60
     }
 
+    /**
+     * 안내 문장: [장소] + [사고 이유] + [행동]. "사고다발구간"이라는 말은 쓰지 않습니다.
+     * 예) 곧 ○○초 사거리예요. 어린이 횡단보도 사고가 많았던 곳이에요. 우회전 전에 꼭 멈추세요.
+     */
     private fun fullMessage(zone: AccidentZone, ctx: DrivingContext, stage: Stage): String {
-        val where = if (stage == Stage.SPLIT) "곧 사고다발구간이에요." else "${roundDistance(ctx.distanceToZoneM)} 앞 ${zone.name}, 사고다발구간이에요."
+        val where = if (stage == Stage.SPLIT) "곧 ${zone.name}${copula(zone.name)}." else "${roundDistance(ctx.distanceToZoneM)} 앞 ${zone.name}${copula(zone.name)}."
         val what = when (zone.type) {
-            AccidentType.ICING -> "이 ${zone.roadShape.label}는 결빙이 잘 생기는 구간이에요."
-            else -> "여기는 ${zone.type.label}가 많았어요."
+            AccidentType.ICING -> "결빙이 잘 생기는 ${zone.roadShape.label}${copula(zone.roadShape.label)}."
+            else -> "${zone.type.label}가 많았던 곳이에요."
         }
         val act = when (zone.type) {
             AccidentType.ICING ->
@@ -66,6 +70,13 @@ object GuidanceEngine {
         AccidentType.ICING -> "결빙"
         AccidentType.REAR_END -> "추돌"
         AccidentType.SIGNAL_VIOLATION -> "신호"
+    }
+
+    /** 받침이 있으면 "이에요", 없으면 "예요" (○○교예요, ○○시장 앞이에요) */
+    internal fun copula(word: String): String {
+        val c = word.lastOrNull() ?: return "예요"
+        if (c !in '가'..'힣') return "예요"
+        return if ((c - '가') % 28 != 0) "이에요" else "예요"
     }
 
     private fun roundDistance(m: Int) = if (m >= 1000) "${m / 1000}km" else "${(m / 100) * 100}m"

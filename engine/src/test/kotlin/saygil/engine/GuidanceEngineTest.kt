@@ -38,8 +38,14 @@ class GuidanceEngineTest {
     @Test fun `300m 안에서는 화면 분할 단계가 되고 행동을 알려준다`() {
         val g = GuidanceEngine.decide(school, ctx(hour = 15, speed = 40, dist = 300))!!
         assertEquals(Stage.SPLIT, g.stage)
-        assertTrue("어린이 횡단보도 사고가 많았어요" in g.message)
-        assertTrue("우회전 전에 꼭 멈추세요" in g.message)
+        assertEquals("곧 ○○초 사거리예요. 어린이 횡단보도 사고가 많았던 곳이에요. 우회전 전에 꼭 멈추세요.", g.message)
+    }
+
+    @Test fun `안내 문장에 사고다발구간이라는 말을 쓰지 않는다`() {
+        val banner = GuidanceEngine.decide(bridge, ctx(speed = 70, dist = 1000))!!
+        assertEquals("1km 앞 ○○교예요. 결빙이 잘 생기는 다리예요. 지금 70km에서 40km로 속도를 줄여주세요.", banner.message)
+        val split = GuidanceEngine.decide(school, ctx(hour = 15, speed = 40, dist = 300))!!
+        assertFalse("사고다발구간" in banner.message || "사고다발구간" in split.message)
     }
 
     @Test fun `매일 다니는 길은 1km 전 안내를 생략하고 300m 전 짧게 한 번만 한다`() {

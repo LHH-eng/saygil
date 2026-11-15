@@ -36,13 +36,22 @@ function isApproachingFast(zone, ctx) {
   }
 }
 
+/** 받침이 있으면 "이에요", 없으면 "예요" (○○교예요, ○○시장 앞이에요) */
+export function copula(word) {
+  const c = word.charCodeAt(word.length - 1);
+  if (!(c >= 0xac00 && c <= 0xd7a3)) return '예요';
+  return (c - 0xac00) % 28 !== 0 ? '이에요' : '예요';
+}
+
+// 안내 문장: [장소] + [사고 이유] + [행동]. "사고다발구간"이라는 말은 쓰지 않습니다.
+// 예) 곧 ○○초 사거리예요. 어린이 횡단보도 사고가 많았던 곳이에요. 우회전 전에 꼭 멈추세요.
 function fullMessage(zone, ctx, stage) {
   const where = stage === Stage.SPLIT
-    ? '곧 사고다발구간이에요.'
-    : `${roundDistance(ctx.distanceToZoneM)} 앞 ${zone.name}, 사고다발구간이에요.`;
+    ? `곧 ${zone.name}${copula(zone.name)}.`
+    : `${roundDistance(ctx.distanceToZoneM)} 앞 ${zone.name}${copula(zone.name)}.`;
   const what = zone.type === AccidentType.ICING
-    ? `이 ${zone.roadShape.label}는 결빙이 잘 생기는 구간이에요.`
-    : `여기는 ${zone.type.label}가 많았어요.`;
+    ? `결빙이 잘 생기는 ${zone.roadShape.label}${copula(zone.roadShape.label)}.`
+    : `${zone.type.label}가 많았던 곳이에요.`;
   let act;
   if (zone.type === AccidentType.ICING) {
     act = ctx.speedKmh > ICING_SAFE_SPEED

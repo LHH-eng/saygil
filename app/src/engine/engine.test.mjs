@@ -31,8 +31,14 @@ test('어린이 사고 구간은 사고가 주로 난 시간에만 안내한다'
 test('300m 안에서는 화면 분할 단계가 되고 행동을 알려준다', () => {
   const g = decide(school, ctx({ hour: 15, speed: 40, dist: 300 }));
   assert.equal(g.stage, Stage.SPLIT);
-  assert.ok(g.message.includes('어린이 횡단보도 사고가 많았어요'));
-  assert.ok(g.message.includes('우회전 전에 꼭 멈추세요'));
+  assert.equal(g.message, '곧 ○○초 사거리예요. 어린이 횡단보도 사고가 많았던 곳이에요. 우회전 전에 꼭 멈추세요.');
+});
+
+test('안내 문장에 사고다발구간이라는 말을 쓰지 않는다', () => {
+  const banner = decide(bridge, ctx({ speed: 70, dist: 1000 }));
+  assert.equal(banner.message, '1km 앞 ○○교예요. 결빙이 잘 생기는 다리예요. 지금 70km에서 40km로 속도를 줄여주세요.');
+  const split = decide(school, ctx({ hour: 15, speed: 40, dist: 300 }));
+  assert.ok(!banner.message.includes('사고다발구간') && !split.message.includes('사고다발구간'));
 });
 
 test('매일 다니는 길은 1km 전 생략, 300m 전 짧게 한 번', () => {
